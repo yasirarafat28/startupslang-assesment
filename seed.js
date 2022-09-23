@@ -1503,6 +1503,7 @@ async function executeSeeds() {
     section_title: "Environmental Factors",
     output_variable_list: "[19,21,24,25]",
   });
+  await db.terminate_config.insert({counterInSec:10, title: "Quiz will now be terminated", message: "You have an allergy to one of the main ingredients in our system. Our current system will not suit you." });
 }
 
 executeSeeds();

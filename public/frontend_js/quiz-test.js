@@ -109,6 +109,44 @@ if (customerId || customerEmail) {
     });
 }
 
+function terminateQuiz() {
+  $.ajax({
+    url: url_preset + "/api/v1/terminate-configuration",
+    type: "GET",
+    success: function (response) {      
+        $("#terminate-wrapper")
+        .html(`<div id="FadedScreen" class="terminate-screen" style="width: 100%; display: block">
+          <div class="terminate-screen-content">
+            <p>
+              ${response.message}
+            </p>
+            <h3>${response.title}</h3>
+            <h2 id="terminateCounter">${Number(response.counterInSec)}</h2>
+          </div>
+        </div>`);
+
+      let distance = response.counterInSec;
+      setInterval(function () {
+        $("#terminateCounter").text(`${distance}`);
+        if (distance < 0) {
+          $("#terminateCounter").text(`Redirecting ...`);
+          window.location = "/";
+        }
+
+        distance--;
+      }, 1000);
+    
+      return response;
+    },
+    error: function (jqXHR, exception) {
+      console.error(jqXHR);
+      console.error(exception);
+      return ;
+    },
+  });
+}
+// terminateQuiz();
+
 function getQuizzesApi() {
   return new Promise(function (resolve, reject) {
     $.ajax({
@@ -1678,13 +1716,15 @@ $(document).on("input", "#myRange", async function (event, isCustom) {
 
 
 function checkAllergie(dataVal) {
+  if (["Banana", "Olive", "Sunflowers"].indexOf(dataVal) != -1) {
+    terminateQuiz();
+    clearTimeout(timeout);
+  }
 }
-
 
 $(document).on("click", ".selectionBtn", function (evt, isCustom) {
   clearTimeout(timeout);
   var val = $(this).attr("data-val");
-  checkAllergie(val);
   if ($(this).hasClass("active")) {
     tempSelectionAns.splice(tempSelectionAns.indexOf(val), 1);
     $(this).removeClass("active");
@@ -1699,6 +1739,9 @@ $(document).on("click", ".selectionBtn", function (evt, isCustom) {
       nextQuestion();
     }, selectionQuestionTimeoutCounter);
   }
+
+
+  checkAllergie(val);
 });
 
 $(document).on("click", ".mcqiBtn", async function () {
