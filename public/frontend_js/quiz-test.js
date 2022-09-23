@@ -1216,6 +1216,11 @@ async function askQuestion(totalQuizQuestions, counter, fromBack) {
         `);
       }
     });
+    $("#typeSelection .answerInner").append(`
+          <div class="selectionOptions">
+            <button data-val="${null}"  class="selectionBtns selectionBtn" onclick="event.preventDefault();handleNoneOfTheAbove()" >${"None of Above"}</button>
+          </div>
+        `);
 
     if (alreadyAnswered && alreadyAnswered.answer) {
       if (Array.isArray(alreadyAnswered.answer)) {
@@ -1671,9 +1676,15 @@ $(document).on("input", "#myRange", async function (event, isCustom) {
   }
 });
 
+
+function checkAllergie(dataVal) {
+}
+
+
 $(document).on("click", ".selectionBtn", function (evt, isCustom) {
   clearTimeout(timeout);
   var val = $(this).attr("data-val");
+  checkAllergie(val);
   if ($(this).hasClass("active")) {
     tempSelectionAns.splice(tempSelectionAns.indexOf(val), 1);
     $(this).removeClass("active");
